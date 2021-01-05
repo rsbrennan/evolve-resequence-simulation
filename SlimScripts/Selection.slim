@@ -31,10 +31,7 @@ initialize() {
 
     // reduce pop size to 50 indivs
     p1.setSubpopulationSize(ParentSize);
-    }
-
-
-10001 late() {
+    
     // give an m3 mutation to every individual, for phenotypic fitness
     sim.subpopulations.genomes.addNewMutation(m3, 0.0, 0);
 
@@ -68,21 +65,40 @@ initialize() {
     // assign positive effect sizes to all QTLs
         for (IndividualQTL in QTL)
         {
-        IndividualQTL.setSelectionCoeff(1.0);
+        IndividualQTL.setSelectionCoeff(0.0);
         }
 
     // assign negative effect sizes to half of the QTLs
-        Negative = sample(0:(NQTL-1), asInteger(NQTL/2));
+       // Negative = sample(0:(NQTL-1), asInteger(NQTL/2));
         // print(Negative) ;
-        NegativeQTL = QTL[Negative];
+        //NegativeQTL = QTL[Negative];
         
-        for (IndividualQTL in NegativeQTL)
-        {
-        IndividualQTL.setSelectionCoeff(-(IndividualQTL.selectionCoeff));
-        }
+        //for (IndividualQTL in NegativeQTL)
+        //{
+        //IndividualQTL.setSelectionCoeff(-(IndividualQTL.selectionCoeff));
+        //}
 
+    // print original phenotypes
+    inds1 = sim.subpopulations.individuals;
+    phenotypes_10000 = inds1.sumOfMutationsOfType(m2);
+    p_10k_out = paste(phenotypes_10000, sep="\n");
+    writeFile(paste(OutPath + "SimRep" + SimRepID + "/" + Quantile_label + "/phenotypes_gen_10000.txt"), p_10k_out,F);
+
+    print(paste("10000 pop size ", size(sim.subpopulations.individuals)));
+}
+
+10001 late() {
+
+    // save phenotypes
+        inds2 = sim.subpopulations.individuals;
+        phenotypes_10001 = inds2.sumOfMutationsOfType(m2);
+        p_101k_out = paste(phenotypes_10001, sep="\n");
+        writeFile(paste(OutPath + "SimRep" + SimRepID + "/" + Quantile_label + "/phenotypes_gen_10001.txt"), p_101k_out,F);
+
+    print(paste("10001 pop size ", size(sim.subpopulations.individuals)));
+    
     // increase populaiton size:
-   p1.setSubpopulationSize(OffspringSize);
+        p1.setSubpopulationSize(OffspringSize);
 }
 
 10002: fitness(m2) {
@@ -90,12 +106,34 @@ initialize() {
     }
 
 10002 late() {
-    // save phenotypes of each individual and write to file
+ print(paste("10002 pop size = ", size(sim.subpopulations.individuals)));
+ 
+    // assign positive effect sizes to all QTLs
+    QTL = sim.mutationsOfType(m2);
+    for (IndividualQTL in QTL)
+        {
+            IndividualQTL.setSelectionCoeff(1.0);
+        }
+    // assign negative effect sizes to half of the QTLs
+        Negative = sample(0:(NQTL-1), asInteger(NQTL/2));
+        NegativeQTL = QTL[Negative];
+
+        for (IndividualQTL in NegativeQTL)
+        {
+        IndividualQTL.setSelectionCoeff(-(IndividualQTL.selectionCoeff));
+        }
+
+
+ // save phenotypes of each individual and write to file
     GenID = sim.generation-9999;
     inds = sim.subpopulations.individuals;
     phenotypes = inds.sumOfMutationsOfType(m2);
-    // Traits = paste(phenotypes, sep="\n");
-
+    Traits = paste(phenotypes, sep="\n");
+    writeFile(paste(OutPath + "SimRep" + SimRepID + "/" + Quantile_label + "/phenotypes_all_10002.txt"),            Traits,F);
+    // return number of QTLs
+        NSegregatingQTL = paste(size(unique(sim.subpopulations.individuals.genomes.mutationsOfType(m2))));
+        writeFile(paste(OutPath + "SimRep" + SimRepID + "/" + Quantile_label + "/NSegregatingQTL.txt"),               NSegregatingQTL, F);
+    
     // assign all individuals to 1 of 8 groups
         sim.subpopulations.individuals.tag=rep(1:8, asInteger(OffspringSize/8));
     
@@ -138,7 +176,7 @@ initialize() {
     
     // write out the genomes for each 
         AllIndividuals = sim.subpopulations.individuals;
-        print(AllIndividuals[ctr1_index]);
+        // print(AllIndividuals[ctr1_index]);
         ctr1_indivs=AllIndividuals[ctr1_index];
         ctr2_indivs=AllIndividuals[ctr2_index];
         ctr3_indivs=AllIndividuals[ctr3_index];

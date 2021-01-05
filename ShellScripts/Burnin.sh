@@ -24,8 +24,8 @@ do
     -d SimRepID=$k  \
     -d Mu=2e-8 \
     -d RecRate=1e-8 \
-    -d LCh=20000000 \
-    -d BurninSize=10000 \
+    -d LCh=30000000 \
+    -d BurninSize=1000 \
     -d "BurninPath='/users/r/b/rbrennan/evolve-resequence-simulation/simulations/Burnin/'" \
     -d "BurninFilename='Burnin.txt'" \
     /users/r/b/rbrennan/evolve-resequence-simulation/SlimScripts/Burnin.slim # Directory to the Burnin.slim file included in the simulation tool.

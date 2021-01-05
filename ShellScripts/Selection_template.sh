@@ -6,8 +6,8 @@
 
 ##### Set variables here:
 
-QTL_in=NQTL20
-SLN_NM=10_percent
+QTL_in=NQTLNQTL_REPLACE
+SLN_NM=SLN_NM_REPLACE
 
 # still need to change variables below to match.
 
@@ -47,7 +47,7 @@ do
             -d LCh=30000000 \
             -d RecRate=1e-8 \
             -d SampleSize=50 \
-            -d NQTL=20 \
+            -d NQTL=NQTL_REPLACE \
             -d ESMean=1.0 \
             -d "ESDist='f'" \
             -d LowFreq=F \
@@ -57,8 +57,8 @@ do
             -d D=0.5 \
             -d OffspringSize=80000 \
             -d ParentSize=50 \
-            -d Cutoff_Quantile=0.1 \
-            -d "Quantile_label='10_percent'" \
+            -d Cutoff_Quantile=QUANTILE_REPLACE \
+            -d "Quantile_label='SLN_NM_REPLACE'" \
             -d "OutPath='/users/r/b/rbrennan/evolve-resequence-simulation/simulations/NQTL20/'" \
             /users/r/b/rbrennan/evolve-resequence-simulation/SlimScripts/Selection.slim # Directory to the Selection.slim file included in the simulation tool.
 
