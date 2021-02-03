@@ -22,6 +22,9 @@ initialize() {
     // set recombination rate; change this if several chromosomes are simulated
     initializeRecombinationRate(RecRate, LCh-1);
 
+    // initial sexes, with autosome
+    initializeSex("A"); 
+
 }
 
 
@@ -232,7 +235,7 @@ initialize() {
          
  
     // output full population
-    //AllIndividuals.genomes.output(OutPath + "SimRep" + SimRepID + "/ExpRepPlus" + ExpRepID + "/Gen" + GenID + "_Full.txt");
+    AllIndividuals.genomes.output(paste(OutPath + "SimRep" + SimRepID + "/" + Quantile_label + "/all_indiv_genomes.txt"));
     //AllIndividuals.genomes.outputVCF("Full.vcf");
 
 }

@@ -3,9 +3,9 @@
 suppressPackageStartupMessages(require(optparse)) # don't say "Loading required package: optparse"
 
 option_list = list(
-    make_option(c("-n", "--nqtl"), type="character", default=NA, 
+    make_option(c("-n", "--nqtl"), type="character", default=NA,
               help="number of QTL simulated"),
-    make_option(c("-s", "--sln"), type="character", default=NA, 
+    make_option(c("-s", "--sln"), type="character", default=NA,
               help="strength of selection, for example 10, 20, 30 (equal to 0.1, 0.2, 0.3)")
 );
 
@@ -32,24 +32,44 @@ SimReps <- 100
 for(i in 1:SimReps){
 
     setwd(paste0("~/evolve-resequence-simulation/simulations/NQTL", opt$nqtl, "/SimRep", i,"/", opt$sln, "_percent"))
-    #setwd("~/evolve-resequence-simulation/simulations/NQTL20/SimRep1/10_percent")
+    #setwd("~/evolve-resequence-simulation/simulations/NQTL20/SimRep1/80_percent")
     # read in sim data to a llist
-    temp = list.files(pattern="*mutations.txt")
-    dfl = lapply(temp, read.csv, header=F, sep=" ")
-
+    temp <-  list.files(pattern="*mutations.txt")
+    temp2 <- temp[grep("all_indiv_mutations.txt",temp, invert=T)]
+    dfl = lapply(temp2, read.csv, header=F, sep=" ")
+    all_muts <- read.csv("all_indiv_mutations.txt", header=F, sep=" ")
     # set colnames
-    colnm <- c("mut_id", "mut_id2", "mut_type", "position", "S", "dominance", "subpop", "generation", "count")
+    colnm <- c("mut_id", "mut_id_perm", "mut_type", "position", "S", "dominance", "subpop", "generation", "count")
+    colnames(all_muts) <- colnm
     dfl <- lapply(dfl, setNames, colnm)
+
+    #read in genome counts
+    genome_counts <- read.csv("genome_number.txt", skip=1, header=F) # skipping number of all indivs
+
+    # get number of mutations that should be present:
+    mut_count <- nrow(all_muts)
 
     #get freqs of the mutations
     for(j in 1:length(dfl)){
-        dfl[[j]]$frequency <- dfl[[j]]$count/20000
+        # first check that all the mutations are present:
+        ## mut_id_perm is the permanent mutation id that matches across all samples
+        ## if it doesn't match, add in the missing ones with a frequency of 0
+        if(nrow(dfl[[j]]) != mut_count){
+            missing <- subset(all_muts, !(all_muts$mut_id_perm %in% dfl[[j]]$mut_id_perm))
+            missing$count <- 0
+            dfl[[j]] <- rbind(dfl[[j]], missing)
+            dfl[[j]]$frequency <- dfl[[j]]$count/genome_counts$V1[j]
+        }else{
+            dfl[[j]]$frequency <- dfl[[j]]$count/genome_counts$V1[j]
+            }
+
+
     }
 
-    # generate base counts for sync, 100x coverage
+    # generate base counts for sync, 200x coverage
 
-    df2 <- lapply(dfl, function(x) { x$ct1 <- round(100*x$frequency);
-                          x$ct2 <- round(100*(1-x$frequency));
+    df2 <- lapply(dfl, function(x) { x$ct1 <- round(200*x$frequency);
+                          x$ct2 <- round(200*(1-x$frequency));
                           return(x)})
 
     df2 <- lapply(df2, function(x) { x[order(x$pos),]})

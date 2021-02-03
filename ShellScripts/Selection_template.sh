@@ -51,11 +51,11 @@ do
             -d ESMean=1.0 \
             -d "ESDist='f'" \
             -d LowFreq=F \
-            -d FreqBound=0.05 \
+            -d FreqBound=0.1 \
             -d LowerPosBound=0 \
             -d UpperPosBound=29999999 \
             -d D=0.5 \
-            -d OffspringSize=80000 \
+            -d OffspringSize=160000 \
             -d ParentSize=50 \
             -d Cutoff_Quantile=QUANTILE_REPLACE \
             -d "Quantile_label='SLN_NM_REPLACE'" \
@@ -68,7 +68,7 @@ do
         for i in $(ls | grep 'genomes' | cut -f 1-2 -d "_"); do
 
             # save num of genomes remaining in each:
-            head -n 1 ${i}_genomes.txt | cut -f 4 -d " " | paste - >> number_genomes.txt
+            head -n 1 ${i}_genomes.txt | cut -f 4 -d " " | paste - >> genome_number.txt
 
             sed -n '/^Mutations/,/^Genomes/p' ${i}_genomes.txt | grep -v "^Genomes:" | grep -v "^Mutations" | grep -v 'm3' > ${i}_mutations.txt
 
