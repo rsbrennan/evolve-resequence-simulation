@@ -45,7 +45,7 @@ for(i in 1:SimReps){
 
     #read in genome counts
     genome_counts <- read.csv("genome_number.txt", skip=1, header=F) # skipping number of all indivs
-
+ 
     # get number of mutations that should be present:
     mut_count <- nrow(all_muts)
 
